@@ -2,6 +2,8 @@
 
 ## Overview
 
+This is for a school project
+
 CSTMS is a web-based application for managing school tests, student grades, and academic performance. It allows administrators, teachers, and students to interact with the system in different ways:
 
 - **Admins** can upload student data, manage users, and view detailed reports.
