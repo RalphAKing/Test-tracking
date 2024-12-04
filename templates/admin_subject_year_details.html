@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ data.subject }} - Year {{ data.year }} Details</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            color: #4CAF50;
+            font-size: 28px;
+            border-bottom: 2px solid #4CAF50;
+            padding-bottom: 10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+            margin-top: 20px;
+        }
+        .button:hover {
+            background-color: #45a049;
+        }
+    </style>
+    <script>
+        function convertGrade(grade, year) {
+            if (year <= 11) {
+                switch (grade) {
+                    case 'A*': return '9';
+                    case 'A': return '8';
+                    case 'B': return '7';
+                    case 'C': return '6';
+                    case 'D': return '5';
+                    case 'E': return '4';
+                    default: return grade; // Return unchanged if no match
+                }
+            }
+            return grade; // Return unchanged if year is greater than 11
+        }
+
+        window.onload = function() {
+            var year = {{ data.year }};  // Fetch year from the data
+            var gradeCells = document.querySelectorAll('.grade-cell');
+
+            gradeCells.forEach(function(cell) {
+                var grade = cell.getAttribute('data-grade');
+                var convertedGrade = convertGrade(grade, year);
+                cell.textContent = convertedGrade;
+            });
+        };
+    </script>
+</head>
+<body>
+    <h1>Details for {{ data.subject }} - Year {{ data.year }}</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Student</th>
+                {% for test in data.tests %}
+                    <th>{{ test.test_name }}</th>
+                {% endfor %}
+                <th>Average %</th>
+                <th>Grade</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for student in data.students %}
+                <tr>
+                    <td>{{ student.username }}</td>
+                    {% for test in data.tests %}
+                        <td>{{ student.marks[test.test_name] if test.test_name in student.marks else 'N/A' }}%</td>
+                    {% endfor %}
+                    <td>{{ student.average_percentage }}%</td>
+                    <td><span class="grade-cell" data-grade="{{ student.grade }}">{{ student.grade }}</span></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="/" class="button">Back to Admin Page</a>
+</body>
+</html>

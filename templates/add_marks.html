@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Marks</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            color: #4CAF50;
+            font-size: 28px;
+        }
+        h2 {
+            color: #555;
+            font-size: 22px;
+        }
+        .container {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            max-width: 1000px;
+            margin: 20px auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        input[type="number"] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            display: block;
+            width: 100%;
+            max-width: 200px;
+            margin: 20px auto;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        a.button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+            text-align: center;
+        }
+        a.button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Add Marks for {{ class_entry['classname'] }} ({{ class_entry['year'] }})</h1>
+        <h2>Test: {{ test_entry['test_name'] }}</h2>
+        <form action="/submit_marks" method="POST">
+            <input type="hidden" name="class_code" value="{{ class_entry['code'] }}">
+            <input type="hidden" name="test_name" value="{{ test_entry['test_name'] }}">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Student</th>
+                        <th>Mark</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for student in students %}
+                        <tr>
+                            <td>{{ student['username'] }}</td>
+                            <td>
+                                <input 
+                                    type="number" 
+                                    name="marks[{{ student['user_id'] }}]" 
+                                    min="0" 
+                                    max="{{ test_entry['max_mark'] }}" 
+                                    value="{{ test_entry['students_marks'].get(student['user_id'], {}).get('mark', '') }}"
+                                    >
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <button type="submit">Submit Marks</button>
+        </form>
+        <a href="{{ url_for('view_class', class_code=class_entry['code']) }}" class="button">Back to Class</a>
+    </div>
+</body>
+</html>

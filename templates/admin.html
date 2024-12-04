@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            color: #4CAF50;
+            font-size: 28px;
+            border-bottom: 2px solid #4CAF50;
+            padding-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        h2, h3 {
+            color: #555;
+            margin-top: 40px;
+        }
+        .header-with-search {
+            display: grid;
+            grid-template-columns: 1fr auto auto;
+            align-items: center;
+            gap: 10px;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        .box {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 15px;
+            margin-bottom: 20px;
+            flex: 1 1 45%;
+            box-sizing: border-box;
+        }
+        .clickable {
+            padding: 10px;
+            margin-bottom: 10px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: background-color 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            text-decoration: none;
+            color: #333;
+            display: block;
+        }
+        .clickable:hover {
+            background-color: #f9f9f9;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+            margin-top: 20px;
+        }
+        .button:hover {
+            background-color: #45a049;
+        }
+        .logout-button {
+            background-color: #f44336;
+        }
+        .logout-button:hover {
+            background-color: #e53935;
+        }
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .graph-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .graph {
+            flex: 1 1 calc(33% - 20px);
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .graph img {
+            max-width: 100%;
+            height: auto;
+        }
+        .form-group {
+            margin-bottom: 10px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        input[type="file"],
+        select {
+            width: 100%;
+            padding: 8px;
+            margin: 3px 0 10px 0;
+            display: inline-block;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .scrollable {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .search-box {
+            width: 150px;
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .flex-container {
+            display: flex;
+            gap: 20px;
+        }
+    </style>
+    <script>
+        function filterStudents() {
+            const input = document.getElementById('searchInput');
+            const filter = input.value.toLowerCase();
+            const ul = document.getElementById('students-list');
+            const li = ul.getElementsByTagName('li');
+
+            for (let i = 0; i < li.length; i++) {
+                const a = li[i].getElementsByTagName('a')[0];
+                const txtValue = a.textContent || a.innerText;
+                if (txtValue.toLowerCase().indexOf(filter) > -1) {
+                    li[i].style.display = '';
+                } else {
+                    li[i].style.display = 'none';
+                }
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>
+        Admin Page
+        <a href="{{ url_for('logout') }}" class="button logout-button">Logout</a>
+    </h1>
+
+    <div class="flex-container">
+        <div class="box">
+            <h2>Create Account</h2>
+            <form action="/create_account" method="POST">
+                <div class="form-group">
+                    <label for="user_type">User Type:</label>
+                    <select name="user_type" required>
+                        <option value="student">Student</option>
+                        <option value="teacher">Teacher</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="username">Full Legal Name:</label>
+                    <input type="text" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" name="password" required>
+                </div>
+                <input type="hidden" name="school" value="{{ session['school'] }}">
+                <button type="submit" class="button">Create Account</button>
+                {% if caerror %}
+                <h2>User already exsists</h2>
+                {% endif %}
+            </form>
+        </div>
+
+        <div class="box">
+            <h2>Import Users from CSV</h2>
+            <p>First Line of CSV must be:<br>
+            name,password,email,account_type</p>
+            <form action="/upload_csv" method="POST" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="file">Select CSV File:</label>
+                    <input type="file" name="file" accept=".csv" required>
+                </div>
+                <button type="submit" class="button">Upload</button>
+            </form>
+
+    {% if existing_users %}
+    <h2>Users not added (already exist):</h2>
+    <ul>
+        {% for user in existing_users %}
+        <li>{{ user }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="box">
+            <div class="header-with-search">
+                <h2>Students</h2>
+                <div></div>
+                <input type="text" id="searchInput" onkeyup="filterStudents()" placeholder="Search for students.." class="search-box">
+            </div>
+            <div class="scrollable">
+                <ul id="students-list">
+                    {% for student in students %}
+                        <li><a class="clickable" href="{{ url_for('admin_student_performance', student_id=student.user_id) }}">{{ student.username }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <div class="box">
+            <h2>Classes</h2>
+            <ul id="classes-list">
+                {% for class in classes %}
+                    <li><a class="clickable" href="{{ url_for('class_data', class_code=class.code) }}">{{ class.classname }} ({{ class.year }})</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+        
+        <div class="box">
+            <h2>Subjects and Years</h2>
+            <ul id="subjects-list">
+                {% for subject, years in subjects_year_data.items() %}
+                    <li>
+                        <strong>{{ subject }}:</strong>
+                        <ul>
+                            {% for year in years %}
+                                <li><a class="clickable" href="{{ url_for('admin_subject_year_details', subject=subject, year=year) }}">Year {{ year }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <h2>Subject-Year Graphs</h2>
+    <div id="subject-graphs" class="graph-container">
+        {% for subject_year in subject_years %}
+            <div class="graph">
+                <h3>{{ subject_year }}</h3>
+                <img src="/static/subject_years/{{ school_name }}/{{ subject_year }}/{{ subject_year }}.png" alt="{{ subject_year }} Graph">
+            </div>
+        {% endfor %}
+    </div>
+</body>
+</html>

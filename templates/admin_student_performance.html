@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Student Performance</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            color: #4CAF50;
+            font-size: 28px;
+        }
+        h2 {
+            color: #555;
+            font-size: 22px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .curve-img {
+            max-width: 200px;
+            height: auto;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .dropdown {
+            cursor: pointer;
+            padding: 5px 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+            text-align: center;
+            display: inline-block;
+        }
+        .dropdown:hover {
+            background-color: #f1f1f1;
+        }
+        .dropdown-content {
+            display: none;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-top: 5px;
+        }
+        .show {
+            display: block;
+        }
+        a.button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        a.button:hover {
+            background-color: #45a049;
+        }
+    </style>
+    <script>
+        function toggleDropdown(id) {
+            var dropdown = document.getElementById(id);
+            if (dropdown.classList.contains('show')) {
+                dropdown.classList.remove('show');
+            } else {
+                dropdown.classList.add('show');
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>Performance for {{ student['username'] }} ({{ student['email'] }})</h1>
+    <h2>Average Percentage: {{ average_percentage }}%</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Subject</th>
+                <th>Test Name</th>
+                <th>Year</th> <!-- Added Year Column -->
+                <th>Test Type</th>
+                <th>Percentage</th>
+                <th>Grade</th>
+                <th>Curve Image</th>
+                <th>Grade Boundaries</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for mark in student_marks %}
+                <tr>
+                    <td>{{ mark['subject'] }}</td>
+                    <td>{{ mark['test_name'] }}</td>
+                    <td>{{ mark['year'] }}</td> <!-- Display Year -->
+                    <td>{{ mark['test_type'] }}</td>
+                    <td>{{ mark['percentage'] }}%</td>
+                    <td>{{ mark['grade'] }}</td>
+                    <td>
+                        {% if mark.image_path %}
+                            <img src="{{ mark.image_path }}" alt="Curve Image" class="curve-img">
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div class="dropdown" onclick="toggleDropdown('dropdown-{{ loop.index }}')">
+                            Show
+                        </div>
+                        <div id="dropdown-{{ loop.index }}" class="dropdown-content">
+                            {% if mark.grade_boundaries %}
+                                <ul>
+                                {% for grade_letter, boundary in mark.grade_boundaries.items() %}
+                                    <li>{{ grade_letter }}: {{ boundary }}%</li>
+                                {% endfor %}
+                                </ul>
+                            {% else %}
+                                N/A
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="/" class="button">Back to Admin Page</a>
+    <a href="{{ url_for('generate_report', student_id=student['user_id']) }}" class="button">Download Report</a>
+</body>
+</html>

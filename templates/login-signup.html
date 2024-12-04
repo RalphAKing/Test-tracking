@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login/Signup</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 400px;
+            max-width: 90%;
+        }
+        .tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border: 1px solid #cccccc;
+            border-radius: 5px 5px 0 0;
+            background-color: #e0e0e0;
+            margin: 0 5px;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        .tab.active {
+            background-color: #ffffff;
+            border-bottom: none;
+            color: #4CAF50;
+        }
+        .form-section {
+            display: none;
+        }
+        .form-section.active {
+            display: block;
+        }
+        h1 {
+            text-align: center;
+            color: #333333;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            margin-top: 10px;
+            color: #555555;
+        }
+        input, select {
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #cccccc;
+            border-radius: 5px;
+        }
+        button {
+            padding: 12px;
+            margin-top: 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="tabs">
+            <div class="tab active" onclick="showSection('login')">Login</div>
+            <div class="tab" onclick="showSection('signup')">Signup</div>
+        </div>
+        <div id="login" class="form-section active">
+            <form action="/login" method="post">
+                <label for="school">School:</label>
+                <select id="school" name="school">
+                    {% for school in schools %}
+                        <option value="{{ school }}">{{ school }}</option>
+                    {% endfor %}
+                </select>
+                <label for="username">Full Legal Name:</label>
+                <input type="text" id="username" name="username" required>
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+                <button type="submit">Login</button>
+            </form>
+        </div>
+        <div id="signup" class="form-section">
+            <form action="/signup" method="post">
+                <label for="school_signup">School:</label>
+                <select id="school_signup" name="school">
+                    {% for school in schools %}
+                        <option value="{{ school }}">{{ school }}</option>
+                    {% endfor %}
+                </select>
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+                <label for="username_signup">Full Legal Name:</label>
+                <input type="text" id="username_signup" name="username" required>
+                <label for="password_signup">Password:</label>
+                <input type="password" id="password_signup" name="password" required>
+                <input type="hidden" id="type" name="type" value="student">
+                <button type="submit">Signup</button>
+            </form>
+        </div>
+    </div>
+    <script>
+        function showSection(section) {
+            document.querySelectorAll('.form-section').forEach(function(formSection) {
+                formSection.classList.remove('active');
+            });
+            document.querySelectorAll('.tab').forEach(function(tab) {
+                tab.classList.remove('active');
+            });
+            document.getElementById(section).classList.add('active');
+            document.querySelector('.tab[onclick="showSection(\'' + section + '\')"]').classList.add('active');
+        }
+    </script>
+</body>
+</html>

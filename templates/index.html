@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Home</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            width: 100%;
+            text-align: left;
+        }
+        .button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+            text-decoration: none;
+            display: inline-block;
+            transition: background-color 0.3s;
+            margin-right: 10px;
+        }
+        .button:hover {
+            background-color: #45a049;
+        }
+        h2 {
+            color: #4CAF50;
+            margin-top: 0;
+        }
+        ul {
+            padding-left: 20px;
+        }
+        .button-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        .examples {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        .examples pre {
+            background: #e8e8e8;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="button-container">
+            <a href="/login-signup" class="button">Login</a>
+            <a href="/login-signup" class="button">Register</a>
+        </div>
+
+        <h2>About Us</h2>
+        <p>We are committed to providing the best service to our users. Our platform offers a variety of features designed to help you succeed.</p>
+
+        <h2>Grading Methods</h2>
+        <p>Our platform supports different grading methods to accommodate various needs:</p>
+        <ul>
+            <li><strong>Curve Grading:</strong> Adjusts the grades based on the distribution of scores among the students.</li>
+            <li><strong>Grade Boundaries:</strong> Sets predefined percentage ranges for each grade (e.g., A, B, C, etc.).</li>
+        </ul>
+        
+        <h2>Examples</h2>
+        <div class="examples">
+            <p><strong>Class Details:</strong> View and manage your class details easily.</p>
+            <pre>
+Class Name: Math 101
+Year: 2024
+Subject: Mathematics
+            </pre>
+            <p><strong>Student Performance:</strong> Track student performance with detailed metrics.</p>
+            <pre>
+Test Name: Midterm Exam
+Percentage: 85%
+Grade: A
+Curve Image:
+            </pre>
+            <p><strong>How Students Use the Platform:</strong></p>
+            <pre>
+1. View Tests: Students can easily view their tests and associated curves.
+2. Access Curves: Click on a test to see the curve image and understand performance distribution.
+3. Access Grade Boundaries: Check to see what the grade boundaries for each test.
+4. View Subject Grades: See there avrage grade over all tests for each subject and the curved grade.
+            </pre>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,4 @@
+#mongodb
+mongodbaddress: mongodb://localhost:27017/
+#admin password to create schools
+adminpassword: password

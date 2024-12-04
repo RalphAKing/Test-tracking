@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Student Dashboard</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            color: #4CAF50;
+            font-size: 28px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        h2 {
+            color: #555;
+            font-size: 22px;
+        }
+        .button-container {
+            display: flex;
+            gap: 10px;
+        }
+        .button, .logout-button, .download-button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            font-size: 14px;
+            line-height: 20px;
+            height: 40px;
+            white-space: nowrap; /* Prevents text from breaking */
+        }
+        .logout-button {
+            background-color: #f44336;
+            color: white;
+        }
+        .logout-button:hover {
+            background-color: #d32f2f;
+        }
+        .download-button {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .download-button:hover {
+            background-color: #45a049;
+        }
+        .dashboard {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .box {
+            flex: 1;
+            min-width: 280px;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: background-color 0.3s, box-shadow 0.3s;
+            text-align: center;
+        }
+        .box:hover {
+            background-color: #f9f9f9;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .form-box {
+            cursor: default;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        input[type="text"] {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            background: #fff;
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: background-color 0.3s, box-shadow 0.3s;
+        }
+        li:hover {
+            background-color: #f9f9f9;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .no-subjects {
+            color: #999;
+            font-style: italic;
+        }
+    </style>
+    <script>
+        function redirectTo(url) {
+            window.location.href = url;
+        }
+
+        function convertGrade(grade, year) {
+            if (year <= 11) {
+                const gradeMap = { "A*": 9, "A": 8, "B": 7, "C": 6, "D": 5, "E": 4, "U": "U" };
+                return gradeMap[grade] || grade;
+            }
+            return grade;
+        }
+    </script>
+</head>
+<body>
+    <h1>
+        Welcome, {{ session.user }}
+        
+        <div class="button-container">
+            <form action="/logout" method="Get" style="display: inline;">
+                <button type="submit" class="button logout-button">Logout</button>
+            </form>
+            <form action="{{ url_for('generate_report', student_id=session['user_id']) }}" method="Get" style="display: inline;">
+                <button type="submit" class="button download-button">Download Report</button>
+            </form>
+        </div>
+    </h1>
+
+    <div class="dashboard">
+        <div class="box form-box">
+            <h2>Join Class</h2>
+            <form action="/join_class" method="POST">
+                <label for="class_code">Class Code:</label>
+                <input type="text" name="class_code" required>
+                <button type="submit">Join Class</button>
+            </form>
+        </div>
+
+        <div class="box">
+            <h2>Your Classes</h2>
+            <ul>
+            {% for class in classes %}
+                <li onclick="redirectTo('/class_tests/{{ class.code }}')">{{ class.classname }} {{ class.subject }}</li>
+            {% endfor %}
+            </ul>
+        </div>
+
+        <div class="box">
+            <h2>Your Subjects and Average Percentages</h2>
+            {% if subjects_years %}
+            <ul>
+            {% for subject_year, data in subjects_years.items() %}
+                {% set year = subject_year.split('-Y')[1] %}
+                <li onclick="redirectTo('/subject_tests/{{ subject_year }}')">{{ subject_year }}: {{ data.average_percentage }}% - Grade: <script>document.write(convertGrade("{{ data.grade }}", {{ year }}))</script></li>
+            {% endfor %}
+            </ul>
+            {% else %}
+            <p class="no-subjects">No subjects found.</p>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

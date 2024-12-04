@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Class Data</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+        h1, h2 {
+            color: #4CAF50;
+        }
+        h1 {
+            font-size: 28px;
+        }
+        h2 {
+            font-size: 22px;
+            margin-top: 20px;
+        }
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .main-content, .side-content {
+            flex: 1;
+            min-width: 300px;
+            margin: 10px;
+        }
+        .main-content {
+            flex: 2;
+        }
+        .subject-graph {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out, max-width 0.3s ease-out;
+        }
+        .subject-graph img {
+            width: 200px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .subject-graph.expanded {
+            max-height: 500px;
+            max-width: 500px;
+        }
+        .subject-graph.expanded img {
+            width: 100%;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
+        th, td {
+            padding: 15px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        .button:hover {
+            background-color: #45a049;
+        }
+        .toggle-button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .toggle-button:hover {
+            background-color: #45a049;
+        }
+    </style>
+    <script>
+        function convertGrade(grade, year) {
+            if (year <= 11) {
+                switch (grade) {
+                    case 'A*': return '9';
+                    case 'A': return '8';
+                    case 'B': return '7';
+                    case 'C': return '6';
+                    case 'D': return '5';
+                    case 'E': return '4';
+                    default: return grade; // If the grade is not one of these, return it unchanged
+                }
+            }
+            return grade; // Return the grade unchanged if the year is above 11
+        }
+
+        window.onload = function() {
+            const year = {{ data.class_entry['year'] }};  // Get the year from passed data
+            const gradeCells = document.querySelectorAll('.grade-cell');
+            
+            gradeCells.forEach(cell => {
+                const originalGrade = cell.getAttribute('data-grade');
+                const convertedGrade = convertGrade(originalGrade, year);
+                cell.textContent = convertedGrade;
+            });
+        }
+
+        function toggleGraph() {
+            var graph = document.getElementById("subjectGraph");
+            graph.classList.toggle("expanded");
+        }
+    </script>
+</head>
+<body>
+    <h1>Class Data for {{ data.class_entry['classname'] }} ({{ data.class_entry['year'] }})</h1>
+    <div class="container">
+        <div class="main-content">
+            <h2>Class Average: {{ data.class_average_percentage }}%</h2>
+            <h2>School Average: {{ data.school_average_percentage }}%</h2>
+            <h2>Class Rank: {{ data.class_rank }}</h2>
+            <button class="toggle-button" onclick="toggleGraph()">Toggle Graph</button>
+            <div class="subject-graph" id="subjectGraph">
+                <img src="/static/subject_years/{{ data['school_name'] }}/{{ data.class_entry['subject'] }}-Y{{ data.class_entry['year'] }}/{{ data.class_entry['subject'] }}-Y{{ data.class_entry['year'] }}.png" alt="{{ data.class_entry['subject'] }} Year {{ data.class_entry['year'] }} Graph">
+            </div>
+        </div>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>Student</th>
+                {% for test in data.tests %}
+                    <th>{{ test['test_name'] }} <br> (Score - Grade)</th>
+                {% endfor %}
+                <th>Average %</th>
+                <th>Grade</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for student_id, student_data in data.students.items() %}
+                <tr>
+                    <td>{{ student_data['username'] }}</td>
+                    {% for test in data.tests %}
+                        <td>{{ student_data['marks'].get(test['test_name'], 'X') }}% - <span class="grade-cell" data-grade="{{ student_data['marks'].get(test['test_name'] + '_grade', 'X') }}">{{ student_data['marks'].get(test['test_name'] + '_grade', 'X') }}</span></td>
+                    {% endfor %}
+                    <td>{{ student_data['average_percentage'] }}%</td>
+                    <td><span class="grade-cell" data-grade="{{ student_data['grade'] }}">{{ student_data['grade'] }}</span></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="/view_class/{{ data.class_entry['code'] }}" class="button">Back to Class</a>
+</body>
+</html>

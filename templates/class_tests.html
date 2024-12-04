@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Class Tests</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            color: #4CAF50;
+        }
+        h2 {
+            color: #555;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .curve-img {
+            max-width: 200px;
+            height: auto;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .dropdown {
+            cursor: pointer;
+            padding: 5px 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+            text-align: center;
+            display: inline-block;
+        }
+        .dropdown:hover {
+            background-color: #f1f1f1;
+        }
+        .dropdown-content {
+            display: none;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-top: 5px;
+        }
+        .show {
+            display: block;
+        }
+        a.button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        a.button:hover {
+            background-color: #45a049;
+        }
+    </style>
+    <script>
+        function toggleDropdown(id) {
+            var dropdown = document.getElementById(id);
+            if (dropdown.classList.contains('show')) {
+                dropdown.classList.remove('show');
+            } else {
+                dropdown.classList.add('show');
+            }
+        }
+
+        function convertGrade(grade, year) {
+            if (year <= 11) {
+                const gradeMap = { "A*": 9, "A": 8, "B": 7, "C": 6, "D": 5, "E": 4, "U": "U" };
+                return gradeMap[grade] || grade;
+            }
+            return grade;
+        }
+    </script>
+</head>
+<body>
+    <h1>Class: {{ class_entry.classname }}</h1>
+    <h2>Tests</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Grading Type</th>
+                <th>Test Name</th>
+                <th>Percentage</th>
+                <th>Grade</th>
+                <th>Curve Image</th>
+                <th>Grade Boundaries</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for test in tests %}
+            {% set year = class_entry.year | int %}
+            <tr>
+                <td>{{ test.grading_type }}</td>
+                <td>{{ test.test_name }}</td>
+                <td>{{ test.percentage }}%</td>
+                <td><script>document.write(convertGrade("{{ test.grade }}", {{ year }}))</script></td>
+                <td>
+                    {% if test.image_path %}
+                        <img src="{{ test.image_path }}" alt="Curve Image" class="curve-img">
+                    {% else %}
+                        N/A
+                    {% endif %}
+                </td>
+                <td>
+                    <div class="dropdown" onclick="toggleDropdown('dropdown-{{ loop.index }}')">
+                        Show
+                    </div>
+                    <div id="dropdown-{{ loop.index }}" class="dropdown-content">
+                        {% if test.grade_boundaries %}
+                            <ul>
+                            {% for grade_letter, boundary in test.grade_boundaries.items() %}
+                                <li><script>document.write(convertGrade("{{ grade_letter }}", {{ year }}))</script>: {{ boundary }}%</li>
+                            {% endfor %}
+                            </ul>
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </div>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <a href="/" class="button">Back to Dashboard</a>
+</body>
+</html>
