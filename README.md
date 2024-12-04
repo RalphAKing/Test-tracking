@@ -139,4 +139,4 @@ Jane Smith,jane.smith@example.com,teacher,ABC_School,hashed_password
 
 ## Contributing
 
-Contributions to the CSTMS project are welcome. To contribute:
+Contributions to the CSTMS project are welcome.
