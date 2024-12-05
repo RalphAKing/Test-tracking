@@ -24,7 +24,7 @@ import csv
 # 2. Sets the secret key for the Flask application to enable session management and other secure features.
 # 3. Updates the Jinja environment globals to include the zip function, allowing it to be used within Jinja templates.
 app = Flask(__name__, static_folder='static')
-app.secret_key = 'fegr4ttrgegr'
+app.secret_key = 'secret_key'
 app.jinja_env.globals.update(zip=zip)
 
 #--Done--
