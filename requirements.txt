@@ -1,6 +1,0 @@
-Flask
-Flask-Session
-PyMongo
-ReportLab
-pymongo
-bcrypt
